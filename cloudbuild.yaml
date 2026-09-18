@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: '.'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/tr-ai-nsport:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/tr-ai-nsport:latest'
+      - '.'
+
+images:
+  - 'gcr.io/$PROJECT_ID/tr-ai-nsport:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/tr-ai-nsport:latest'
