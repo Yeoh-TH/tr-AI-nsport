@@ -1,0 +1,68 @@
+# Runtime contract shared by the upload UI and the Google Cloud processor.
+upload:
+  endpoint: "https://trainsport-269677196717.europe-west1.run.app"
+  method: "POST"
+  field: "file"
+  accepted_types:
+    - "text/csv"
+    - ".csv"
+  max_size_mb: 10
+  response_shape: "{ anomalies: Anomaly[] }"
+
+processing:
+  provider: "google-cloud"
+  output_model: "src/lib/data.ts::Anomaly"
+  required_columns:
+    - "aspect"
+    - "severity"
+  optional_columns:
+    - "id"
+    - "title"
+    - "stationId"
+    - "track"
+    - "train"
+    - "car"
+    - "detail"
+    - "date"
+
+# The GitHub Action should upload files committed to data/ only. Browser uploads
+# use upload.endpoint above and must be authenticated by the Cloud Run service.
+github_action:
+  source_path: "data/"
+  bucket: "trainsport_file_update"
+  branch: "main"
+name: Upload CSV to Google Cloud Storage
+
+# 1. The Trigger: Only run when a CSV file in the 'data/' folder is updated
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/*/.csv'
+
+# 2. Permissions: Required to request the secure token from Google Cloud
+permissions:
+  contents: 'read'
+  id-token: 'write'
+
+jobs:
+  upload-to-gcs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # This pulls the key securely from GitHub settings
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Upload Data to GCS
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          path: 'data/'
+          destination: 'trainsport_file_update/'
+          glob: '*/.csv'
