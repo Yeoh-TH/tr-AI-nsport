@@ -1,6 +1,6 @@
 # Runtime contract shared by the upload UI and the Google Cloud processor.
 upload:
-  endpoint: "https://trainsport-269677196717.europe-west1.run.app"
+  endpoint: "https://tr-ai-nsport-269677196717.europe-west1.run.app"
   method: "POST"
   field: "file"
   accepted_types:

@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/Yeoh-TH/tr-AI-nsport/",
+  "homepage": "https://yeoh-th.github.io/tr-ai-nsport",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
